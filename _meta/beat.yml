@@ -1,0 +1,20 @@
+################### Owmbeat Configuration Example #########################
+
+############################# Owmbeat ######################################
+
+owmbeat:
+  # Defines how often an event is sent to the output
+  period: 1m
+
+  appid: "yourappid"
+
+  regions:
+    - region:
+      enabled: true
+      name: "Slovakia"
+      description: "Somewhere in Europe"
+      lon-left: 16
+      lat-bottom: 47
+      lon-right: 23
+      lat-top: 50
+      zoom: 10

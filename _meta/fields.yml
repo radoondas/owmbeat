@@ -1,0 +1,91 @@
+- key: owmbeat
+  title: Open weather map beat
+  description:
+  fields:
+    - name: type
+      type: keyword
+      description: >
+        Type
+    - name: openweathermap
+      type: group
+      description: Open Weather Map data
+      fields:
+        - name: timestamp
+          type: date
+          description: "Time of data calculation, unix, UTC"
+        - name: wind
+          type: group
+          description: Wind data
+          fields:
+            - name: speed
+              type: float
+              description: "Wind speed. Unit Default - meter/sec, Metric - meter/sec, Imperial - miles/hour"
+            - name: deg
+              type: float
+              description: "Wind direction, degrees (meteorological)"
+        - name: rain
+          type: group
+          description: Rain data
+          fields:
+            - name: 1h
+              type: float
+              description: "Rain volume for the last 1 hour, mm"
+            - name: 3h
+              type: float
+              description: "Rain volume for the last 3 hours, mm"
+        - name: snow
+          type: group
+          description: Snow data
+          fields:
+            - name: 1h
+              type: float
+              description: "Snow volume for the last 1 hour, mm"
+            - name: 3h
+              type: float
+              description: "Snow volume for the last 3 hours, mm"
+        - name: clouds
+          type: group
+          description: Cloud coverage
+          fields:
+            - name: today
+              type: integer
+              description: "Cloudiness, %"
+        - name: city
+          type: group
+          description: City data
+          fields:
+            - name: name
+              type: keyword
+              description: "City name"
+            - name: id
+              type: integer
+              description: "City ID"
+        - name: location
+          type: geo_point
+          description: "City geo location (Lat, Lon)"
+
+        - name: main
+          type: group
+          description: Main data
+          fields:
+            - name: grndLevel
+              type: float
+              description: "Atmospheric pressure on the ground level, hPa"
+            - name: temp
+              type: float
+              description: "Temperature. Unit Default: Kelvin, Metric: Celsius, Imperial: Fahrenheit."
+            - name: tempMin
+              type: float
+              description: "Minimum temperature at the moment. This is deviation from current temp that is possible for large cities and megalopolises geographically expanded (use these parameter optionally). Unit Default: Kelvin, Metric: Celsius, Imperial: Fahrenheit."
+            - name: tempMax
+              type: float
+              description: "Maximum temperature at the moment. This is deviation from current temp that is possible for large cities and megalopolises geographically expanded (use these parameter optionally). Unit Default: Kelvin, Metric: Celsius, Imperial: Fahrenheit."
+            - name: pressure
+              type: float
+              description: "Atmospheric pressure (on the sea level, if there is no sea_level or grnd_level data), hPa"
+            - name: humidity
+              type: integer
+              description: "Humidity, %"
+            - name: seaLevel
+              type: float
+              description: "Atmospheric pressure on the sea level, hPa"

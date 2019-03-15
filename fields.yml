@@ -1,0 +1,354 @@
+- key: owmbeat
+  title: Open weather map beat
+  description:
+  fields:
+    - name: type
+      type: keyword
+      description: >
+        Type
+    - name: openweathermap
+      type: group
+      description: Open Weather Map data
+      fields:
+        - name: timestamp
+          type: date
+          description: "Time of data calculation, unix, UTC"
+        - name: wind
+          type: group
+          description: Wind data
+          fields:
+            - name: speed
+              type: float
+              description: "Wind speed. Unit Default - meter/sec, Metric - meter/sec, Imperial - miles/hour"
+            - name: deg
+              type: float
+              description: "Wind direction, degrees (meteorological)"
+        - name: rain
+          type: group
+          description: Rain data
+          fields:
+            - name: 1h
+              type: float
+              description: "Rain volume for the last 1 hour, mm"
+            - name: 3h
+              type: float
+              description: "Rain volume for the last 3 hours, mm"
+        - name: snow
+          type: group
+          description: Snow data
+          fields:
+            - name: 1h
+              type: float
+              description: "Snow volume for the last 1 hour, mm"
+            - name: 3h
+              type: float
+              description: "Snow volume for the last 3 hours, mm"
+        - name: clouds
+          type: group
+          description: Cloud coverage
+          fields:
+            - name: today
+              type: integer
+              description: "Cloudiness, %"
+        - name: city
+          type: group
+          description: City data
+          fields:
+            - name: name
+              type: keyword
+              description: "City name"
+            - name: id
+              type: integer
+              description: "City ID"
+        - name: location
+          type: geo_point
+          description: "City geo location (Lat, Lon)"
+
+        - name: main
+          type: group
+          description: Main data
+          fields:
+            - name: grndLevel
+              type: float
+              description: "Atmospheric pressure on the ground level, hPa"
+            - name: temp
+              type: float
+              description: "Temperature. Unit Default: Kelvin, Metric: Celsius, Imperial: Fahrenheit."
+            - name: tempMin
+              type: float
+              description: "Minimum temperature at the moment. This is deviation from current temp that is possible for large cities and megalopolises geographically expanded (use these parameter optionally). Unit Default: Kelvin, Metric: Celsius, Imperial: Fahrenheit."
+            - name: tempMax
+              type: float
+              description: "Maximum temperature at the moment. This is deviation from current temp that is possible for large cities and megalopolises geographically expanded (use these parameter optionally). Unit Default: Kelvin, Metric: Celsius, Imperial: Fahrenheit."
+            - name: pressure
+              type: float
+              description: "Atmospheric pressure (on the sea level, if there is no sea_level or grnd_level data), hPa"
+            - name: humidity
+              type: integer
+              description: "Humidity, %"
+            - name: seaLevel
+              type: float
+              description: "Atmospheric pressure on the sea level, hPa"
+
+- key: beat
+  title: Beat
+  description: >
+    Contains common beat fields available in all event types.
+  fields:
+
+    - name: beat.name
+      description: >
+        The name of the Beat sending the log messages. If the Beat name is
+        set in the configuration file, then that value is used. If it is not
+        set, the hostname is used. To set the Beat name, use the `name`
+        option in the configuration file.
+    - name: beat.hostname
+      description: >
+        The hostname as returned by the operating system on which the Beat is
+        running.
+    - name: beat.timezone
+      description: >
+        The timezone as returned by the operating system on which the Beat is
+        running.
+    - name: beat.version
+      description: >
+        The version of the beat that generated this event.
+
+    - name: "@timestamp"
+      type: date
+      required: true
+      format: date
+      example: August 26th 2016, 12:35:53.332
+      description: >
+        The timestamp when the event log record was generated.
+
+    - name: tags
+      description: >
+        Arbitrary tags that can be set per Beat and per transaction
+        type.
+
+    - name: fields
+      type: object
+      object_type: keyword
+      description: >
+        Contains user configurable fields.
+
+    - name: error
+      type: group
+      description: >
+        Error fields containing additional info in case of errors.
+      fields:
+        - name: message
+          type: text
+          description: >
+            Error message.
+        - name: code
+          type: long
+          description: >
+            Error code.
+        - name: type
+          type: keyword
+          description: >
+            Error type.
+
+- key: alias
+  title: Alias
+  description: >
+    Alias fields for compatibility with 7.x.
+  fields:
+    # Common Beats fields
+    - name: host.hostname
+      type: alias
+      path: beat.hostname
+    - name: event.timezone
+      type: alias
+      path: beat.timezone
+
+    # Cloud processor fields
+    - name: cloud.provider
+      type: alias
+      path: meta.cloud.provider
+    - name: cloud.instance.id
+      type: alias
+      path: meta.cloud.instance_id
+    - name: cloud.instance.name
+      type: alias
+      path: meta.cloud.instance_name
+    - name: cloud.machine.type
+      type: alias
+      path: meta.cloud.machine_type
+    - name: cloud.availability_zone
+      type: alias
+      path: meta.cloud.availability_zone
+    - name: cloud.project.id
+      type: alias
+      path: meta.cloud.project_id
+    - name: cloud.region
+      type: alias
+      path: meta.cloud.region
+
+    # Docker processor fields
+    - name: container.id
+      type: alias
+      path: docker.container.id
+    - name: container.name
+      type: alias
+      path: docker.container.name
+    - name: container.image.name
+      type: alias
+      path: docker.container.image
+- key: cloud
+  title: Cloud provider metadata
+  description: >
+    Metadata from cloud providers added by the add_cloud_metadata processor.
+  fields:
+
+    - name: meta.cloud.provider
+      example: ec2
+      description: >
+        Name of the cloud provider. Possible values are ec2, gce, or digitalocean.
+
+    - name: meta.cloud.instance_id
+      description: >
+        Instance ID of the host machine.
+
+    - name: meta.cloud.instance_name
+      description: >
+        Instance name of the host machine.
+
+    - name: meta.cloud.machine_type
+      example: t2.medium
+      description: >
+        Machine type of the host machine.
+
+    - name: meta.cloud.availability_zone
+      example: us-east-1c
+      description: >
+        Availability zone in which this host is running.
+
+    - name: meta.cloud.project_id
+      example: project-x
+      description: >
+        Name of the project in Google Cloud.
+
+    - name: meta.cloud.region
+      description: >
+        Region in which this host is running.
+- key: docker
+  title: Docker
+  description: >
+    Docker stats collected from Docker.
+  short_config: false
+  anchor: docker-processor
+  fields:
+    - name: docker
+      type: group
+      fields:
+        - name: container.id
+          type: keyword
+          description: >
+            Unique container id.
+        - name: container.image
+          type: keyword
+          description: >
+            Name of the image the container was built on.
+        - name: container.name
+          type: keyword
+          description: >
+            Container name.
+        - name: container.labels
+          type: object
+          object_type: keyword
+          description: >
+            Image labels.
+- key: host
+  title: Host
+  description: >
+    Info collected for the host machine.
+  anchor: host-processor
+  fields:
+    - name: host
+      type: group
+      fields:
+        - name: name
+          type: keyword
+          description: >
+            Hostname.
+        - name: id
+          type: keyword
+          description: >
+            Unique host id.
+        - name: architecture
+          type: keyword
+          description: >
+            Host architecture (e.g. x86_64, arm, ppc, mips).
+        - name: os.platform
+          type: keyword
+          description: >
+            OS platform (e.g. centos, ubuntu, windows).
+        - name: os.version
+          type: keyword
+          description: >
+            OS version.
+        - name: os.family
+          type: keyword
+          description: >
+            OS family (e.g. redhat, debian, freebsd, windows).
+        - name: ip
+          type: ip
+          description: >
+            List of IP-addresses.
+        - name: mac
+          type: keyword
+          description: >
+            List of hardware-addresses, usually MAC-addresses.
+
+- key: kubernetes
+  title: Kubernetes
+  description: >
+    Kubernetes metadata added by the kubernetes processor
+  short_config: false
+  anchor: kubernetes-processor
+  fields:
+    - name: kubernetes
+      type: group
+      fields:
+        - name: pod.name
+          type: keyword
+          description: >
+            Kubernetes pod name
+
+        - name: pod.uid
+          type: keyword
+          description: >
+            Kubernetes Pod UID
+
+        - name: namespace
+          type: keyword
+          description: >
+            Kubernetes namespace
+
+        - name: node.name
+          type: keyword
+          description: >
+            Kubernetes node name
+
+        - name: labels
+          type: object
+          description: >
+            Kubernetes labels map
+
+        - name: annotations
+          type: object
+          description: >
+            Kubernetes annotations map
+
+        - name: container.name
+          type: keyword
+          description: >
+            Kubernetes container name
+
+        - name: container.image
+          type: keyword
+          description: >
+            Kubernetes container image

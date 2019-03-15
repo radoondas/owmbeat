@@ -1,0 +1,5 @@
+= Open Weather Map Beat (Owm) Docs
+
+Welcome to the Open Weather Map Beat documentation.
+
+
