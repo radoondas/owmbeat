@@ -761,3 +761,27 @@ Atmospheric pressure on the sea level, hPa
 
 --
 
+[float]
+== region fields
+
+Region details
+
+
+*`openweathermap.region.name`*::
++
+--
+type: keyword
+
+Region name
+
+--
+
+*`openweathermap.region.description`*::
++
+--
+type: text
+
+Region description
+
+--
+

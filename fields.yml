@@ -89,6 +89,16 @@
             - name: seaLevel
               type: float
               description: "Atmospheric pressure on the sea level, hPa"
+        - name: region
+          type: group
+          description: "Region details"
+          fields:
+            - name: name
+              type: keyword
+              description: "Region name"
+            - name: description
+              type: text
+              description: "Region description"
 
 - key: beat
   title: Beat

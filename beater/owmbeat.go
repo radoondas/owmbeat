@@ -210,7 +210,7 @@ func (bt *Owmbeat) GetOWM(region config.Region) error {
 
 	logp.NewLogger(selector).Debug("Unmarshal-ed Owm data: ", owmdata)
 
-	transformedData := bt.TransformOwmData(owmdata)
+	transformedData := bt.TransformOwmData(owmdata, region.Name, region.Description)
 
 	for _, d := range transformedData {
 
@@ -229,12 +229,16 @@ func (bt *Owmbeat) GetOWM(region config.Region) error {
 	return nil
 }
 
-func (bt *Owmbeat) TransformOwmData(data OwmResponseData) []common.MapStr {
+func (bt *Owmbeat) TransformOwmData(data OwmResponseData, regionName string, regionDesc string) []common.MapStr {
 
 	measurements := []common.MapStr{}
 
 	for _, m := range data.Measurements {
 		measure := common.MapStr{
+			"region": common.MapStr{
+				"name":        regionName,
+				"description": regionDesc,
+			},
 			"city": common.MapStr{
 				"id":   m.CityId,
 				"name": m.Name,
