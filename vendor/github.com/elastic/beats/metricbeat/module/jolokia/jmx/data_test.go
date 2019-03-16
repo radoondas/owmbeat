@@ -22,7 +22,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/elastic/beats/libbeat/common"
 )
@@ -30,12 +30,12 @@ import (
 func TestEventMapper(t *testing.T) {
 	absPath, err := filepath.Abs("./_meta/test")
 
-	require.NotNil(t, absPath)
-	require.NoError(t, err)
+	assert.NotNil(t, absPath)
+	assert.Nil(t, err)
 
 	jolokiaResponse, err := ioutil.ReadFile(absPath + "/jolokia_response.json")
 
-	require.NoError(t, err)
+	assert.Nil(t, err)
 
 	var mapping = AttributeMapping{
 		attributeMappingKey{"java.lang:type=Runtime", "Uptime"}: Attribute{
@@ -60,7 +60,7 @@ func TestEventMapper(t *testing.T) {
 	// Map response to Metricbeat events
 	events, err := eventMapper.EventMapping(jolokiaResponse, mapping)
 
-	require.NoError(t, err)
+	assert.Nil(t, err)
 
 	expected := []common.MapStr{
 		{
@@ -93,7 +93,7 @@ func TestEventMapper(t *testing.T) {
 		},
 	}
 
-	require.ElementsMatch(t, expected, events)
+	assert.ElementsMatch(t, expected, events)
 }
 
 // TestEventGroupingMapper tests responses which are returned
@@ -101,12 +101,12 @@ func TestEventMapper(t *testing.T) {
 func TestEventGroupingMapper(t *testing.T) {
 	absPath, err := filepath.Abs("./_meta/test")
 
-	require.NotNil(t, absPath)
-	require.NoError(t, err)
+	assert.NotNil(t, absPath)
+	assert.Nil(t, err)
 
 	jolokiaResponse, err := ioutil.ReadFile(absPath + "/jolokia_response.json")
 
-	require.NoError(t, err)
+	assert.Nil(t, err)
 
 	var mapping = AttributeMapping{
 		attributeMappingKey{"java.lang:type=Runtime", "Uptime"}: Attribute{
@@ -131,7 +131,7 @@ func TestEventGroupingMapper(t *testing.T) {
 	// Map response to Metricbeat events
 	events, err := eventMapper.EventMapping(jolokiaResponse, mapping)
 
-	require.NoError(t, err)
+	assert.Nil(t, err)
 
 	expected := []common.MapStr{
 		{
@@ -168,7 +168,7 @@ func TestEventGroupingMapper(t *testing.T) {
 		},
 	}
 
-	require.ElementsMatch(t, expected, events)
+	assert.ElementsMatch(t, expected, events)
 }
 
 // TestEventGroupingMapperGetRequest tests responses which are returned
@@ -178,12 +178,12 @@ func TestEventGroupingMapper(t *testing.T) {
 func TestEventGroupingMapperGetRequest(t *testing.T) {
 	absPath, err := filepath.Abs("./_meta/test")
 
-	require.NotNil(t, absPath)
-	require.NoError(t, err)
+	assert.NotNil(t, absPath)
+	assert.Nil(t, err)
 
 	jolokiaResponse, err := ioutil.ReadFile(absPath + "/jolokia_get_response.json")
 
-	require.NoError(t, err)
+	assert.Nil(t, err)
 
 	var mapping = AttributeMapping{
 		attributeMappingKey{"java.lang:type=Memory", "HeapMemoryUsage"}: Attribute{
@@ -198,7 +198,7 @@ func TestEventGroupingMapperGetRequest(t *testing.T) {
 	// Map response to Metricbeat events
 	events, err := eventMapper.EventMapping(jolokiaResponse, mapping)
 
-	require.NoError(t, err)
+	assert.Nil(t, err)
 
 	expected := []common.MapStr{
 		{
@@ -219,54 +219,18 @@ func TestEventGroupingMapperGetRequest(t *testing.T) {
 		},
 	}
 
-	require.ElementsMatch(t, expected, events)
-}
-
-// TestEventGroupingMapperGetRequestUptime tests responses which are returned
-// from a Jolokia GET request and only has one uptime runtime value.
-func TestEventGroupingMapperGetRequestUptime(t *testing.T) {
-	absPath, err := filepath.Abs("./_meta/test")
-
-	require.NotNil(t, absPath)
-	require.NoError(t, err)
-
-	jolokiaResponse, err := ioutil.ReadFile(absPath + "/jolokia_get_response_uptime.json")
-
-	require.NoError(t, err)
-
-	var mapping = AttributeMapping{
-		attributeMappingKey{"java.lang:type=Runtime", "Uptime"}: Attribute{
-			Field: "runtime.uptime", Event: "runtime"},
-	}
-
-	// Construct a new GET response event mapper
-	eventMapper := NewJolokiaHTTPRequestFetcher("GET")
-
-	// Map response to Metricbeat events
-	events, err := eventMapper.EventMapping(jolokiaResponse, mapping)
-
-	require.NoError(t, err)
-
-	expected := []common.MapStr{
-		{
-			"runtime": common.MapStr{
-				"uptime": float64(88622),
-			},
-		},
-	}
-
-	require.ElementsMatch(t, expected, events)
+	assert.ElementsMatch(t, expected, events)
 }
 
 func TestEventMapperWithWildcard(t *testing.T) {
 	absPath, err := filepath.Abs("./_meta/test")
 
-	require.NotNil(t, absPath)
-	require.NoError(t, err)
+	assert.NotNil(t, absPath)
+	assert.Nil(t, err)
 
 	jolokiaResponse, err := ioutil.ReadFile(absPath + "/jolokia_response_wildcard.json")
 
-	require.NoError(t, err)
+	assert.Nil(t, err)
 
 	var mapping = AttributeMapping{
 		attributeMappingKey{"Catalina:name=*,type=ThreadPool", "port"}: Attribute{
@@ -280,8 +244,8 @@ func TestEventMapperWithWildcard(t *testing.T) {
 
 	// Map response to Metricbeat events
 	events, err := eventMapper.EventMapping(jolokiaResponse, mapping)
-	require.NoError(t, err)
-	require.Equal(t, 2, len(events))
+	assert.Nil(t, err)
+	assert.Equal(t, 2, len(events))
 
 	expected := []common.MapStr{
 		{
@@ -296,18 +260,18 @@ func TestEventMapperWithWildcard(t *testing.T) {
 		},
 	}
 
-	require.ElementsMatch(t, expected, events)
+	assert.ElementsMatch(t, expected, events)
 }
 
 func TestEventGroupingMapperWithWildcard(t *testing.T) {
 	absPath, err := filepath.Abs("./_meta/test")
 
-	require.NotNil(t, absPath)
-	require.NoError(t, err)
+	assert.NotNil(t, absPath)
+	assert.Nil(t, err)
 
 	jolokiaResponse, err := ioutil.ReadFile(absPath + "/jolokia_response_wildcard.json")
 
-	require.NoError(t, err)
+	assert.Nil(t, err)
 
 	var mapping = AttributeMapping{
 		attributeMappingKey{"Catalina:name=*,type=ThreadPool", "port"}: Attribute{
@@ -321,8 +285,8 @@ func TestEventGroupingMapperWithWildcard(t *testing.T) {
 
 	// Map response to Metricbeat events
 	events, err := eventMapper.EventMapping(jolokiaResponse, mapping)
-	require.NoError(t, err)
-	require.Equal(t, 4, len(events))
+	assert.Nil(t, err)
+	assert.Equal(t, 4, len(events))
 
 	expected := []common.MapStr{
 		{
@@ -343,5 +307,5 @@ func TestEventGroupingMapperWithWildcard(t *testing.T) {
 		},
 	}
 
-	require.ElementsMatch(t, expected, events)
+	assert.ElementsMatch(t, expected, events)
 }

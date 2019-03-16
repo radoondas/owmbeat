@@ -172,7 +172,13 @@ func (l *winEventLog) Read() ([]Record, error) {
 			continue
 		}
 
-		r, _ := l.buildRecordFromXML(l.outputBuf.Bytes(), err)
+		r, err := l.buildRecordFromXML(l.outputBuf.Bytes(), err)
+		if err != nil {
+			logp.Err("%s Dropping event. %v", l.logPrefix, err)
+			incrementMetric(dropReasons, err)
+			continue
+		}
+
 		r.Offset = checkpoint.EventLogState{
 			Name:         l.channelName,
 			RecordNumber: r.RecordID,
@@ -223,12 +229,9 @@ func (l *winEventLog) eventHandles(maxRead int) ([]win.EvtHandle, int, error) {
 }
 
 func (l *winEventLog) buildRecordFromXML(x []byte, recoveredErr error) (Record, error) {
-	includeXML := l.config.IncludeXML
 	e, err := sys.UnmarshalEventXML(x)
 	if err != nil {
-		e.RenderErr = append(e.RenderErr, err.Error())
-		// Add raw XML to event.original when decoding fails
-		includeXML = true
+		return Record{}, fmt.Errorf("Failed to unmarshal XML='%s'. %v", x, err)
 	}
 
 	err = sys.PopulateAccount(&e.User)
@@ -240,9 +243,9 @@ func (l *winEventLog) buildRecordFromXML(x []byte, recoveredErr error) (Record, 
 	if e.RenderErrorCode != 0 {
 		// Convert the render error code to an error message that can be
 		// included in the "message_error" field.
-		e.RenderErr = append(e.RenderErr, syscall.Errno(e.RenderErrorCode).Error())
+		e.RenderErr = syscall.Errno(e.RenderErrorCode).Error()
 	} else if recoveredErr != nil {
-		e.RenderErr = append(e.RenderErr, recoveredErr.Error())
+		e.RenderErr = recoveredErr.Error()
 	}
 
 	if e.Level == "" {
@@ -259,7 +262,7 @@ func (l *winEventLog) buildRecordFromXML(x []byte, recoveredErr error) (Record, 
 		Event: e,
 	}
 
-	if includeXML {
+	if l.config.IncludeXML {
 		r.XML = string(x)
 	}
 
