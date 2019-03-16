@@ -39,8 +39,8 @@ type OwmResponseData struct {
 }
 
 type Measure struct {
-	CityId    int32        `json:"id"`
-	Timestamp int32        `json:"dt"`
+	CityId    int          `json:"id"`
+	Timestamp int          `json:"dt"`
 	Name      string       `json:"name"`
 	Coord     Coordination `json:"coord"`
 	Main      Main         `json:"main"`
@@ -61,7 +61,7 @@ type Main struct {
 	Temp_min   float32 `json:"temp_min"`
 	Temp_max   float32 `json:"temp_max"`
 	Pressure   float32 `json:"pressure"`
-	Humidity   int32   `json:"humidity"`
+	Humidity   int     `json:"humidity"`
 	Sea_level  float32 `json:"sea_level"`
 	Grnd_level float32 `json:"grnd_level"`
 }
@@ -72,7 +72,7 @@ type Wind struct {
 }
 
 type Clouds struct {
-	Today int32 `json:"today"`
+	Today int `json:"today"`
 }
 
 type Rain struct {
@@ -86,7 +86,7 @@ type Snow struct {
 }
 
 type Weather struct {
-	Id          int32
+	Id          int
 	Main        string
 	Description string
 	Icon        string
@@ -239,7 +239,7 @@ func (bt *Owmbeat) TransformOwmData(data OwmResponseData) []common.MapStr {
 				"id":   m.CityId,
 				"name": m.Name,
 			},
-			"timestamp": m.Timestamp,
+			"timestamp": m.Timestamp * 1000,
 			"location": common.MapStr{
 				"lat": m.Coord.Lat,
 				"lon": m.Coord.Lon,
