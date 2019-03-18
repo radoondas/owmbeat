@@ -15,6 +15,9 @@ http://api.openweathermap.org/data/2.5/box/city?bbox=12,32,15,37,10
 ## Installation
 Download and install appropriate package for your system. Check release [page](https://github.com/radoondas/owmbeat/releases) for latest packages.
 
+You also can use Docker image `docker pull radoondas/owmbeat`
+
+
 ## Configuration
 
 To run owmbeat you need to [register](https://home.openweathermap.org/) and [generate](https://home.openweathermap.org/api_keys) your `appid` to authenticate your API requests.
