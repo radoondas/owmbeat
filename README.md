@@ -2,116 +2,56 @@
 
 Welcome to Owmbeat.
 
-Ensure that this folder is at the following location:
-`${GOPATH}/src/github.com/radoondas/owmbeat`
+Owmbeat implements one (start simple) api call from [OmenWeatherMap](https://openweathermap.org/) service.
 
-## Getting Started with owmbeat
+You can configure [Cities within a rectangle zone](https://openweathermap.org/current#rectangle)
 
-### Requirements
-
-* [Golang](https://golang.org/dl/) 1.10
-
-### Init Project
-To get running with Owmbeat and also install the
-dependencies, run the following command:
-
+Example API call might look like following
 ```
-make setup
-```
-
-It will create a clean git history for each major step. Note that you can always rewrite the history if you wish before pushing your changes.
-
-To push Owmbeat in the git repository, run the following commands:
-
-```
-git remote set-url origin https://github.com/radoondas/owmbeat
-git push origin master
-```
-
-For further development, check out the [beat developer guide](https://www.elastic.co/guide/en/beats/libbeat/current/new-beat.html).
-
-### Build
-
-To build the binary for Owmbeat run the command below. This will generate a binary
-in the same directory with the name owmbeat.
-
-```
-make
+http://api.openweathermap.org/data/2.5/box/city?bbox=12,32,15,37,10
 ```
 
 
-### Run
+## Installation
+Download and install appropriate package for your system. Check release [page](https://github.com/radoondas/owmbeat/releases) for latest packages.
 
-To run Owmbeat with debugging output enabled, run:
+## Configuration
 
-```
-./owmbeat -c owmbeat.yml -e -d "*"
-```
+To run owmbeat you need to [register](https://home.openweathermap.org/) and [generate](https://home.openweathermap.org/api_keys) your `appid` to authenticate your API requests.
 
+```yaml
+  appid: "yourappid"
 
-### Test
+``` 
 
-To test Owmbeat, run the following command:
-
-```
-make testsuite
-```
-
-alternatively:
-```
-make unit-tests
-make system-tests
-make integration-tests
-make coverage-report
+Period definition defines how often to pull data from service. This time period depends on your level of subscription.
+For free API id does not make sense to pull new documents less than 1h. Set period to `1h`.
+```yaml
+  period: 1m
 ```
 
-The test coverage is reported in the folder `./build/coverage/`
+Next, define your regions. Each region is one `bbox` definition from api call. YOu can define multiple regions to cover different areas.
 
-### Update
-
-Each beat has a template for the mapping in elasticsearch and a documentation for the fields
-which is automatically generated based on `fields.yml` by running the following command.
-
-```
-make update
+```yaml
+  regions:
+    - region:
+      enabled: true
+      name: "Slovakia"
+      description: "Somewhere in Europe"
+      lon-left: 16
+      lat-bottom: 47
+      lon-right: 23
+      lat-top: 50
+      zoom: 10
 ```
 
 
-### Cleanup
-
-To clean  Owmbeat source code, run the following commands:
+## Run
 
 ```
-make fmt
-make simplify
-```
-
-To clean up the build directory and generated artifacts, run:
-
-```
-make clean
+./owmbeat -c owmbeat.yml -e 
 ```
 
 
-### Clone
-
-To clone Owmbeat from the git repository, run the following commands:
-
-```
-mkdir -p ${GOPATH}/src/github.com/radoondas/owmbeat
-git clone https://github.com/radoondas/owmbeat ${GOPATH}/src/github.com/radoondas/owmbeat
-```
-
-
-For further development, check out the [beat developer guide](https://www.elastic.co/guide/en/beats/libbeat/current/new-beat.html).
-
-
-## Packaging
-
-The beat frameworks provides tools to crosscompile and package your beat for different platforms. This requires [docker](https://www.docker.com/) and vendoring as described above. To build packages of your beat, run the following command:
-
-```
-make release
-```
-
-This will fetch and create all images required for the build process. The whole process to finish can take several minutes.
+## Build
+If you want to build Owmbeat from scratch, follow [build](BUILD.md) documentation.
