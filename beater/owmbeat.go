@@ -99,7 +99,7 @@ type Weather struct {
 func New(b *beat.Beat, cfg *common.Config) (beat.Beater, error) {
 	c := config.DefaultConfig
 	if err := cfg.Unpack(&c); err != nil {
-		return nil, fmt.Errorf("Error reading config file: %v", err)
+		return nil, fmt.Errorf("error reading config file: %v", err)
 	}
 
 	bt := &Owmbeat{
@@ -125,15 +125,15 @@ func (bt *Owmbeat) Run(b *beat.Beat) error {
 			defer ticker.Stop()
 
 			for {
+				err := bt.GetOWM(r)
+				if err != nil {
+					logp.NewLogger(selector).Error("Error while getting OWM data: %v", err)
+				}
+
 				select {
 				case <-bt.done:
 					goto GotoFinish
 				case <-ticker.C:
-				}
-
-				err := bt.GetOWM(r)
-				if err != nil {
-					logp.NewLogger(selector).Error("Error while getting OWM data: %v", err)
 				}
 			}
 		GotoFinish:
@@ -152,8 +152,6 @@ func (bt *Owmbeat) Stop() {
 }
 
 func (bt *Owmbeat) GetOWM(region config.Region) error {
-
-	//now := time.Now()
 
 	var ParsedUrl *url.URL
 	client := &http.Client{}
@@ -191,31 +189,33 @@ func (bt *Owmbeat) GetOWM(region config.Region) error {
 	if res.StatusCode != 200 {
 		logp.NewLogger(selector).Debug("Status code: ", res.StatusCode)
 		logp.NewLogger(selector).Debug("Status code: ", res.Body)
-		return fmt.Errorf("HTTP %s", res)
+		return fmt.Errorf("HTTP %v", res)
 	}
 
 	body, err := ioutil.ReadAll(res.Body)
 	logp.NewLogger(selector).Debug(body)
 	if err != nil {
-		//panic(err)
 		log.Fatal(err)
+		return err
 	}
 
 	owmdata := OwmResponseData{}
 	err = json.Unmarshal([]byte(body), &owmdata)
 	if err != nil {
 		fmt.Printf("error: %v", err)
-		panic(err)
+		//panic(err)
+		return err
 	}
 
 	logp.NewLogger(selector).Debug("Unmarshal-ed Owm data: ", owmdata)
 
 	transformedData := bt.TransformOwmData(owmdata, region.Name, region.Description)
 
+	ts := time.Now()
 	for _, d := range transformedData {
 
 		event := beat.Event{
-			Timestamp: time.Now(),
+			Timestamp: ts,
 			Fields: common.MapStr{
 				"type":           "owmbeat",
 				"openweathermap": d,
