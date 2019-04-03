@@ -22,16 +22,34 @@ package main
 import (
 	"context"
 	"fmt"
+	"regexp"
 	"time"
 
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
+	"github.com/pkg/errors"
 
 	"github.com/elastic/beats/dev-tools/mage"
 )
 
 func init() {
-	mage.SetBuildVariableSources(mage.DefaultBeatBuildVariableSources)
+	//mage.SetBuildVariableSources(mage.DefaultBeatBuildVariableSources)
+
+	mage.SetElasticBeatsDir("vendor/github.com/elastic/beats")
+	mage.SetBuildVariableSources(&mage.BuildVariableSources{
+		DocBranch:   "{{ elastic_beats_dir }}/libbeat/docs/version.asciidoc",
+		GoVersion:   ".go-version",
+		BeatVersion: ".beat-version",
+		BeatVersionParser: func(data []byte) (string, error) {
+			re := regexp.MustCompile(`(?m)^version = "(.+)"\r?$`)
+			matches := re.FindSubmatch(data)
+			if len(matches) == 2 {
+				return string(matches[1]), nil
+			}
+
+			return "", errors.New("failed to parse beat version file")
+		},
+	})
 
 	mage.BeatDescription = "One sentence description of the Beat."
 }
