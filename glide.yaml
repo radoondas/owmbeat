@@ -4,3 +4,5 @@ import:
     version: v6.7.0
   - package: github.com/magefile/mage
     version: v1.8.0
+  - package: github.com/pkg/errors
+    version: 0.8.0
