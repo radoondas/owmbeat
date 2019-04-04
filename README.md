@@ -2,7 +2,7 @@
 
 Welcome to Owmbeat.
 
-Owmbeat implements one (start simple) api call from [OmenWeatherMap](https://openweathermap.org/) service.
+Owmbeat implements one (start simple) api call from [OpenWeatherMap](https://openweathermap.org/) service.
 
 You can configure [Cities within a rectangle zone](https://openweathermap.org/current#rectangle)
 
