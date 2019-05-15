@@ -1,5 +1,5 @@
 owmbeat:
-  period: 1m
+  period: 1h
 
   appid: "yourappid"
 
@@ -13,4 +13,3 @@ owmbeat:
       lon-right: 23
       lat-top: 50
       zoom: 10
-
