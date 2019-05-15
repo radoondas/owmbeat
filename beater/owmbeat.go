@@ -120,25 +120,27 @@ func (bt *Owmbeat) Run(b *beat.Beat) error {
 	}
 
 	for _, r := range bt.config.Regions {
-		go func(r config.Region) {
-			ticker := time.NewTicker(bt.config.Period)
-			defer ticker.Stop()
+		if r.Enabled {
+			go func(r config.Region) {
+				ticker := time.NewTicker(bt.config.Period)
+				defer ticker.Stop()
 
-			for {
-				logp.NewLogger(selector).Info("Region: ", r.Name)
-				err := bt.GetOWM(r)
-				if err != nil {
-					logp.NewLogger(selector).Error("Error while getting OWM data: %v", err)
-				}
+				for {
+					logp.NewLogger(selector).Info("Region: ", r.Name)
+					err := bt.GetOWM(r)
+					if err != nil {
+						logp.NewLogger(selector).Error("Error while getting OWM data: %v", err)
+					}
 
-				select {
-				case <-bt.done:
-					goto GotoFinish
-				case <-ticker.C:
+					select {
+					case <-bt.done:
+						goto GotoFinish
+					case <-ticker.C:
+					}
 				}
-			}
-		GotoFinish:
-		}(r)
+			GotoFinish:
+			}(r)
+		}
 	}
 
 	<-bt.done
