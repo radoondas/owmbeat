@@ -30,7 +30,7 @@ To run owmbeat you need to [register](https://home.openweathermap.org/) and [gen
 Period definition defines how often to pull data from service. This time period depends on your level of subscription.
 For free API id does not make sense to pull new documents less than 1h. Set period to `1h`.
 ```yaml
-  period: 1m
+  period: 1h
 ```
 
 Next, define your regions. Each region is one `bbox` definition from api call. YOu can define multiple regions to cover different areas.
