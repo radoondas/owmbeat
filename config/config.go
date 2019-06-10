@@ -6,9 +6,10 @@ package config
 import "time"
 
 type Config struct {
-	Period  time.Duration `config:"period"`
-	Regions []Region      `conig:"regions"`
-	AppId   string        `config:"appid"`
+	Period      time.Duration `config:"period"`
+	Regions     []Region      `config:"regions"`
+	AppId       string        `config:"appid"`
+	MaxApiCalls int           `config:"maxApiCalls"`
 }
 
 type Region struct {
@@ -23,5 +24,6 @@ type Region struct {
 }
 
 var DefaultConfig = Config{
-	Period: 1 * time.Minute,
+	Period:      1 * time.Hour,
+	MaxApiCalls: 60,
 }
