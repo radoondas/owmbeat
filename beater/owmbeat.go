@@ -106,6 +106,12 @@ func New(b *beat.Beat, cfg *common.Config) (beat.Beater, error) {
 		done:   make(chan struct{}),
 		config: c,
 	}
+
+	err := bt.init(b)
+	if err != nil {
+		return nil, err
+	}
+
 	return bt, nil
 }
 
@@ -119,7 +125,20 @@ func (bt *Owmbeat) Run(b *beat.Beat) error {
 		return err
 	}
 
+	// number of calls per API
+	// can be defined in configuration for API
+	// 60 is for free API
+	var apiCalls = bt.config.MaxApiCalls
+	// current number of api calls
+	var numberOfCalls = 0
+
 	for _, r := range bt.config.Regions {
+		if numberOfCalls == apiCalls {
+			logp.NewLogger(selector).Debug("Sleeping for 60 seconds...")
+			time.Sleep(60 * time.Second)
+			numberOfCalls = 0
+		}
+
 		if r.Enabled {
 			go func(r config.Region) {
 				ticker := time.NewTicker(bt.config.Period)
@@ -140,6 +159,7 @@ func (bt *Owmbeat) Run(b *beat.Beat) error {
 				}
 			GotoFinish:
 			}(r)
+			numberOfCalls++
 		}
 	}
 
@@ -196,7 +216,14 @@ func (bt *Owmbeat) GetOWM(region config.Region) error {
 	}
 
 	body, err := ioutil.ReadAll(res.Body)
-	logp.NewLogger(selector).Debug(body)
+
+	// check if the response is not an empty array
+	if len(body) <= 2 {
+		logp.NewLogger(selector).Debug("API call '", ParsedUrl.String(), "' returns 0 results. Response body: ", string(body))
+		return nil
+	}
+
+	logp.NewLogger(selector).Debug(string(body))
 	if err != nil {
 		log.Fatal(err)
 		return err
@@ -205,8 +232,7 @@ func (bt *Owmbeat) GetOWM(region config.Region) error {
 	owmdata := OwmResponseData{}
 	err = json.Unmarshal([]byte(body), &owmdata)
 	if err != nil {
-		fmt.Printf("error: %v", err)
-		//panic(err)
+		//fmt.Println("error: %v", err)
 		return err
 	}
 
@@ -282,4 +308,36 @@ func (bt *Owmbeat) TransformOwmData(data OwmResponseData, regionName string, reg
 	}
 
 	return measurements
+}
+
+// init config check
+func (bt *Owmbeat) init(b *beat.Beat) error {
+
+	if bt.config.AppId == "" {
+		return fmt.Errorf("invalid or empty appId: %v", bt.config.AppId)
+	}
+
+	// count number of enabled regions
+	// this is relevant for calculation whether we can do all API calls within Period
+	enabledRegions := 0
+	for _, region := range bt.config.Regions {
+		if region.Enabled {
+			enabledRegions++
+		}
+	}
+	logp.NewLogger(selector).Info("Total enabled regions: ", enabledRegions, " from ", len(bt.config.Regions), " configured regions.")
+
+	//check if we can fit all api calls within period using `maxApiCalls` per minute
+	// ((number of regions / calls per minute) * 60 (sec)) < Period (in sec)
+	if enabledRegions > 0 {
+		totalEvaluationTime := (enabledRegions / bt.config.MaxApiCalls) * 60
+		if float64(totalEvaluationTime) > bt.config.Period.Seconds() {
+			return fmt.Errorf("too many regions! They will not fit within Period of %f seconds using %d number of calls per minute. %d seconds would be required", bt.config.Period.Seconds(), bt.config.MaxApiCalls, totalEvaluationTime)
+		}
+	} else {
+		//0 enabled regions!
+		return fmt.Errorf("no regions defined. Please configure at least one enabled region")
+	}
+
+	return nil
 }
