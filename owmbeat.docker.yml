@@ -3,14 +3,16 @@ owmbeat:
 
   appid: "yourappid"
 
+  maxApiCalls: 60
+
   regions:
     - region:
       enabled: true
       name: "Slovakia"
       description: "Somewhere in Europe"
-      lon-left: 16
+      lon-left: 17
       lat-bottom: 47
-      lon-right: 23
+      lon-right: 22
       lat-top: 50
       zoom: 10
 
