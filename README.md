@@ -33,6 +33,11 @@ For free API id does not make sense to pull new documents less than 1h. Set peri
   period: 1h
 ```
 
+Define the rate limit for your account type. The default is set to 60 for free account type.
+```yaml
+  maxApiCalls: 60
+```
+
 Next, define your regions. Each region is one `bbox` definition from api call. YOu can define multiple regions to cover different areas.
 
 ```yaml
@@ -41,10 +46,10 @@ Next, define your regions. Each region is one `bbox` definition from api call. Y
       enabled: true
       name: "Slovakia"
       description: "Somewhere in Europe"
-      lon-left: 16
-      lat-bottom: 47
-      lon-right: 23
-      lat-top: 50
+      lon-left: 17
+      lat-bottom: 46
+      lon-right: 22
+      lat-top: 51
       zoom: 10
 ```
 
@@ -54,6 +59,11 @@ Next, define your regions. Each region is one `bbox` definition from api call. Y
 ```
 ./owmbeat -c owmbeat.yml -e 
 ```
+
+## Visualisations
+This is an example of temperature visualisation using [Map](https://www.elastic.co/guide/en/kibana/current/maps.html) application in Kibana.
+
+![Map](docs/img/worldmap-temperature.png)
 
 
 ## Build
