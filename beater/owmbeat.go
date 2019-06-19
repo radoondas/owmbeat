@@ -92,7 +92,7 @@ type Weather struct {
 	Icon        string
 }
 
-// http://api.openweathermap.org/data/2.5/box/city?bbox=16,47,23,50,10&appid=9ae766cc7027b713ac80c6458ec911b5
+// http://api.openweathermap.org/data/2.5/box/city?bbox=16,47,23,50,10&appid=yourappid
 // bbox bounding box [lon-left,lat-bottom,lon-right,lat-top,zoom]
 
 // New creates an instance of owmbeat.
