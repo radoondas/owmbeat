@@ -26,6 +26,7 @@ addons:
     update: true
     packages:
       - python-virtualenv
+      - python-setuptools
 
 before_install:
   - python --version
