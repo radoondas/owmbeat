@@ -1,8 +1,10 @@
+[![Build Status](https://travis-ci.org/radoondas/owmbeat.svg?branch=6.8)](https://travis-ci.org/radoondas/owmbeat)
+
 # Open Weather Map Beat (owmbeat)
 
 Welcome to Owmbeat.
 
-Owmbeat implements one (start simple) api call from [OmenWeatherMap](https://openweathermap.org/) service.
+Owmbeat implements one (start simple) api call from [OpenWeatherMap](https://openweathermap.org/) service.
 
 You can configure [Cities within a rectangle zone](https://openweathermap.org/current#rectangle)
 
@@ -30,7 +32,7 @@ To run owmbeat you need to [register](https://home.openweathermap.org/) and [gen
 Period definition defines how often to pull data from service. This time period depends on your level of subscription.
 For free API id does not make sense to pull new documents less than 1h. Set period to `1h`.
 ```yaml
-  period: 1m
+  period: 1h
 ```
 
 Next, define your regions. Each region is one `bbox` definition from api call. YOu can define multiple regions to cover different areas.
