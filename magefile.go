@@ -25,6 +25,7 @@ import (
 	"time"
 
 	"github.com/elastic/beats/dev-tools/mage"
+
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
 )
