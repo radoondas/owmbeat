@@ -1,7 +1,7 @@
 package: github.com/radoondas/owmbeat
 import:
   - package: github.com/elastic/beats
-    version: v6.8.1
+    version: v6.8.2
   - package: github.com/magefile/mage
     version: 5e51f9ad1ed0886c5d06a8c46a09703cfc4d9034
   - package: github.com/pkg/errors
