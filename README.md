@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/radoondas/owmbeat.svg?branch=master)](https://travis-ci.org/radoondas/owmbeat)
+[![Build Status](https://travis-ci.org/radoondas/owmbeat.svg?branch=7.3)](https://travis-ci.org/radoondas/owmbeat)
 
 # Open Weather Map Beat (owmbeat)
 
